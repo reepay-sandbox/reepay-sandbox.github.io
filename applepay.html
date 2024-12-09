@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Billwerk+ Apple Pay</title>
+    <link rel="stylesheet" href="/pay.css" />
+  </head>
+  <body>
+    <header style="margin-bottom: 5rem">
+      <a href="./index.html">Go back</a>
+    </header>
+
+    <main>
+      <h3 style="text-align: center">Requirements for Apple Pay:</h3>
+      <a
+        style="display: flex; justify-content: center"
+        href="https://optimize-docs.billwerk.com/docs/apple-pay"
+        target="_blank"
+      >
+        Billwerk+ Apple Pay Documentation
+      </a>
+
+      <br />
+      <br />
+      <br />
+      <p>Is Apple Pay available?</p>
+      <div class="button-container">
+        <button class="button" id="apple-pay-button"></button>
+      </div>
+    </main>
+    <footer>
+      <p>Version 2.0.1</p>
+      &copy; 2025 Billwerk+. All rights reserved.
+    </footer>
+
+    <script src="https://checkout.reepay.com/checkout.js"></script>
+    <script src="/applepay.js"></script>
+  </body>
+</html>
