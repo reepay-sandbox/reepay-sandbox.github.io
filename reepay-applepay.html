@@ -14,23 +14,70 @@
     <main>
       <h3 style="text-align: center">Requirements for Apple Pay SDK:</h3>
       <a
-        style="display: flex; justify-content: center"
+        style="display: flex; justify-content: center; margin-bottom: 4rem"
         href="https://sandbox.reepay.com/apple_embedded/docs-page/docs-page.html"
         target="_blank"
       >
         Frisbii Apple Pay SDK Documentation
       </a>
 
-      <br />
-      <br />
-      <br />
-      <p>Is Apple Pay SDK available?</p>
+      <div style="text-align: center; margin-bottom: 2rem">
+        <label
+          for="pubkey-input"
+          style="display: block; margin-bottom: 0.5rem; font-weight: bold"
+        >
+          Enter Public Key:
+        </label>
+        <input
+          type="text"
+          id="pubkey-input"
+          placeholder="Frisbii Public Key"
+          value=""
+          style="
+            padding: 0.5rem;
+            width: 20rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.9rem;
+          "
+        />
+        <button
+          id="test-button"
+          class="button"
+          style="margin-left: 1rem; padding: 0.5rem 1rem"
+        >
+          Create Apple Pay Button
+        </button>
+      </div>
+      <label
+        for="apple-pay-status"
+        style="
+          display: block;
+          margin-bottom: 0.5rem;
+          font-weight: bold;
+          text-align: center;
+        "
+      >
+        Status
+      </label>
+      <div id="apple-pay-status" class="status"></div>
+      <label
+        for="apple-pay-button"
+        style="
+          display: block;
+          margin-bottom: 0.5rem;
+          font-weight: bold;
+          text-align: center;
+        "
+      >
+        Apple Pay Button
+      </label>
       <div class="button-container">
-        <button class="button" id="apple-pay-button"></button>
+        <div style="cursor: pointer" id="apple-pay-button"></div>
       </div>
     </main>
     <footer>
-      <p>Version 2.0.1</p>
+      <p>Version 2.1.0</p>
       &copy; 2025 Frisbii. All rights reserved.
     </footer>
 
