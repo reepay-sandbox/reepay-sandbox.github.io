@@ -53,9 +53,9 @@ ReepayApplePay.eventObserver.subscribe(function (reepayEvent) {
         `Apple Pay is not available (ReepayApplePay): ${reepayEvent.message}`
       );
       break;
-    case eventCode.Token:
+    case eventCode.token_retrieved:
       console.log("Payment token retrieved:", reepayEvent.data);
-      // TODO: Handle payment token here
+      currentApplePayButtonRef.completePayment(true);
       break;
     case eventCode.completed:
       console.log("Payment completed successfully");
