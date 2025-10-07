@@ -11,7 +11,9 @@ let currentApplePayButtonRef = null;
 applePayStatus.innerHTML = "Waiting for Public Key";
 applePayStatus.style.background = "gray";
 
-// TODO: add your pubkey
+// TODO: test apple pay button
+// 1. add "reepay-sandbox.github.io" to your apple pay agreement domains
+// 2. add your pubkey to defaultPubkey
 const defaultPubkey = "";
 
 document.addEventListener("DOMContentLoaded", function () {
