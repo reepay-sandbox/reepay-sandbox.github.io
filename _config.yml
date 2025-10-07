@@ -1,3 +1,4 @@
 theme: jekyll-theme-minimal
 title: Reepay Sandbox
 description: Bookmark this to test Apple Pay and Google Pay!
+include: [".well-known"]
