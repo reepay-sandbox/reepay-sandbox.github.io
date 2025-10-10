@@ -39,7 +39,7 @@ var lineItems = {
   },
 };
 
-var transactionAmount = 1;
+var transactionAmount = "0";
 
 const eventCode = ReepayApplePay.EVENT_CODE;
 const contactField = ReepayApplePay.CONTACT_FIELD;
@@ -220,11 +220,11 @@ function handleInteractionEvents(data) {
   var interactionData = data?.interactionData;
 
   if (resBuilder?.builderType === "ShippingMethodSelected") {
-    var currentAmount = currentApplePayButtonRef.getCurrentTotal();
+    var currentAmount = currentApplePayButtonRef.getCurrentTotal().amount;
     if (+interactionData.amount === 0) {
       currentAmount = transactionAmount;
     } else {
-      currentAmount = +currentAmount.amount + +interactionData.amount;
+      currentAmount = +currentAmount + +interactionData.amount;
     }
     resBuilder.setNewTotalAmount(currentAmount);
   } else if (resBuilder?.builderType === "ShippingContactSelected") {
