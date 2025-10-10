@@ -39,7 +39,7 @@ var lineItems = {
   },
 };
 
-var transactionAmount = "0";
+var transactionAmount = "1";
 
 const eventCode = ReepayApplePay.EVENT_CODE;
 const contactField = ReepayApplePay.CONTACT_FIELD;
