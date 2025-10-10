@@ -155,7 +155,10 @@ function initializeApplePay(pubkey) {
     applePayStatus.innerHTML = "Initializing Apple Pay...";
     applePayStatus.style.background = "gray";
 
-    const builder = new ReepayApplePay.ApplePayBuilder(pubkey, "Frisbii Denmark A/S");
+    const builder = new ReepayApplePay.ApplePayBuilder(
+      pubkey,
+      "Frisbii Denmark A/S"
+    );
     createOneOffPayment(builder);
 
     // createRecurringPayment(builder);
@@ -181,6 +184,7 @@ function createOneOffPayment(builder) {
   };
   builder
     .setTransactionAmount(transactionAmount)
+    .setCurrencyCode("EUR")
     .addLineItem(lineItems.vat)
     .addLineItem(lineItems.shipping)
     .setButtonHeight(buttonStyles.height)
