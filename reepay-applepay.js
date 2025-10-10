@@ -1,7 +1,50 @@
 // Implementation using ReepayApplePay SDK as per documentation
 // https://sandbox.reepay.com/apple_embedded/docs-page/docs-page.html
 
+var shippingMethods = {
+  freeShipping: {
+    label: "Free Standard Shipping",
+    amount: "0.00",
+    detail: "Arrives in 7-10 days",
+    identifier: "standardShipping",
+  },
+  expressShipping: {
+    label: "Express Shipping",
+    amount: "1.00",
+    detail: "Arrives in 2-3 days",
+    identifier: "expressShipping",
+  },
+  denmarkShipping: {
+    label: "Denmark Shipping",
+    amount: "10.00",
+    detail: "Arrives in 30 days",
+    identifier: "denmarkShipping",
+  },
+  pickUpShipping: {
+    label: "Pick Up Shipping",
+    amount: "0.00",
+    detail: "Pick up at store",
+    identifier: "pickUpShipping",
+  },
+};
+
+var lineItems = {
+  vat: {
+    label: "VAT",
+    amount: "1.00",
+  },
+  shipping: {
+    label: "Shipping",
+    amount: "0.00",
+  },
+};
+
+var transactionAmount = 1;
+
 const eventCode = ReepayApplePay.EVENT_CODE;
+const contactField = ReepayApplePay.CONTACT_FIELD;
+const eventType = ReepayApplePay.EVENT_TYPE;
+
 const applePayStatus = document.getElementById("apple-pay-status");
 const pubkeyInput = document.getElementById("pubkey-input");
 const testButton = document.getElementById("test-button");
@@ -37,6 +80,11 @@ testButton.addEventListener("click", function () {
 // Subscribe to event observer to track Apple Pay availability
 ReepayApplePay.eventObserver.subscribe(function (reepayEvent) {
   console.log("ReepayApplePay event received:", reepayEvent);
+
+  if (reepayEvent.type === ReepayApplePay.EVENT_TYPE.Interact) {
+    handleInteractionEvents(reepayEvent.data);
+    return;
+  }
 
   switch (reepayEvent.message) {
     case eventCode.Available:
@@ -75,13 +123,41 @@ ReepayApplePay.eventObserver.subscribe(function (reepayEvent) {
   }
 });
 
+function handleInteractEventTypes(reepayEvent) {
+  if (
+    reepayEvent.data.responseBuilder.builderType === "ShippingMethodSelected"
+  ) {
+    switch (reepayEvent.message) {
+      case eventCode.interaction_request:
+        reepayEvent.data.responseBuilder.addNewShippingMethod({
+          label: "Test",
+          amount: "0.10",
+          detail: "Arrives in 5-7 minutes",
+          identifier: "freshShipping",
+        });
+        reepayEvent.data.responseBuilder.sendResponse();
+        break;
+      case eventCode.interaction_completed:
+        console.log("Interaction completed");
+        break;
+      case eventCode.interaction_failed:
+        console.log("Interaction failed");
+        break;
+      default:
+        console.log("Other interaction event:", reepayEvent);
+        break;
+    }
+  }
+}
+
 function initializeApplePay(pubkey) {
   try {
     applePayStatus.innerHTML = "Initializing Apple Pay...";
     applePayStatus.style.background = "gray";
 
-    const builder = new ReepayApplePay.ApplePayBuilder(pubkey, "Frisbii");
+    const builder = new ReepayApplePay.ApplePayBuilder(pubkey, "Frisbii Denmark A/S");
     createOneOffPayment(builder);
+
     // createRecurringPayment(builder);
 
     currentApplePayButtonRef = builder.createApplePayButton("apple-pay-button");
@@ -104,15 +180,61 @@ function createOneOffPayment(builder) {
     width: "200px",
   };
   builder
-    .setTransactionAmount(1)
+    .setTransactionAmount(transactionAmount)
+    .addLineItem(lineItems.vat)
+    .addLineItem(lineItems.shipping)
     .setButtonHeight(buttonStyles.height)
     .setButtonWidth(buttonStyles.width)
     .setButtonStyle(buttonStyles.style)
     .setButtonType(buttonStyles.type)
     .setButtonLanguage(buttonStyles.language);
+
+  // setupExtraData(builder);
+
   return builder;
 }
 
+function setupExtraData(builder) {
+  var contactField = ReepayApplePay.CONTACT_FIELD;
+  var shippingType = ReepayApplePay.SHIPPING_TYPE;
+  builder
+    .addLineItem(lineItems.vat)
+    .addLineItem(lineItems.shipping)
+    .addShippingMethod(shippingMethods.freeShipping)
+    .addShippingMethod(shippingMethods.expressShipping)
+    .setShippingType(shippingType.shipping)
+    .addRequiredBillingContactField(contactField.postal_address)
+    .addRequiredBillingContactField(contactField.name)
+    .addRequiredBillingContactField(contactField.phonetic_name)
+    .addRequiredShippingContactField(contactField.postal_address)
+    .addRequiredShippingContactField(contactField.name)
+    .addRequiredShippingContactField(contactField.phone)
+    .addRequiredShippingContactField(contactField.email)
+    .listenForPaymentMethodChanges(true)
+    .listenForShippingMethodChanges(true)
+    .listenForShippingContactChanges(true);
+}
+
+function handleInteractionEvents(data) {
+  var resBuilder = data?.responseBuilder;
+  var interactionData = data?.interactionData;
+
+  if (resBuilder?.builderType === "ShippingMethodSelected") {
+    var currentAmount = currentApplePayButtonRef.getCurrentTotal();
+    if (+interactionData.amount === 0) {
+      currentAmount = transactionAmount;
+    } else {
+      currentAmount = +currentAmount.amount + +interactionData.amount;
+    }
+    resBuilder.setNewTotalAmount(currentAmount);
+  } else if (resBuilder?.builderType === "ShippingContactSelected") {
+    if (interactionData.country === "Denmark") {
+      resBuilder.addNewShippingMethod(shippingMethods.denmarkShipping);
+      resBuilder.addNewShippingMethod(shippingMethods.pickUpShipping);
+    }
+  }
+  resBuilder?.sendResponse();
+}
 /**
  * RECURRING PAYMENT SETUP
  */
